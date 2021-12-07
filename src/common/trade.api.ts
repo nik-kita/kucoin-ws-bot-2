@@ -24,7 +24,7 @@ class TradeApi {
     public static async placeMarketOrder(
         details: MarketOrderDto,
     ) {
-        return TradeApi.placeNewSingleOrder({ ...details, type: 'market' });
+        return TradeApi.placeNewSingleOrder({ ...details });
     }
 
     private static async placeNewSingleOrder(details: LimitOrderDto | MarketOrderDto) {
