@@ -41,13 +41,15 @@ const funds = cliSize('funds: ');
         ws1.on('message', onMessage);
     };
 
-    await KucoinWs.subscribeAllTickers(afterConnect);
+    const client = await KucoinWs.subscribeAllTickers(afterConnect);
 
     await new Promise<void>((resolve) => {
         setTimeout(() => {
             resolve();
         }, 20000);
     });
+
+    client.finish();
 
     const sorted = Array.from(map.values()).filter((a) => /\w+-USDT/.test(a.subject)).sort((a, b) => {
         const aAgio = a.data.agio ?? -100;

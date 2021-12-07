@@ -7,7 +7,6 @@ export function sellOnFirstPriceGoDown(symbol: string, size: string) {
     const afterConnect = (ws: WebSocket) => {
         ws.once('message', (firstMessage: any) => {
             const { data: firstData } = JSON.parse(firstMessage) as MessageType;
-            console.log(firstData);
             if (!firstData || !firstData.price) {
                 console.log('First message didnt have any price info... please try again');
                 process.exit(0);
@@ -24,8 +23,6 @@ export function sellOnFirstPriceGoDown(symbol: string, size: string) {
                 if (!data || !data.price) return;
 
                 const { price } = data;
-
-                console.log(symbol, size);
 
                 if (price > firstPrice && price < lastPrice) {
                     processing = true;

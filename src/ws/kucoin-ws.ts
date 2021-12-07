@@ -43,8 +43,10 @@ export class KucoinWs {
         coins: string[],
         afterConnect: (ws: WebSocket) => void,
     ) {
+        const id = v4();
+        console.log(id);
         return KucoinWs.connect(
-            new MarketTickerSomePubDto(v4(), coins),
+            new MarketTickerSomePubDto(id, coins),
             afterConnect,
         );
     }
@@ -52,14 +54,20 @@ export class KucoinWs {
     public static async subscribeAllTickers(
         afterConnect: (ws: WebSocket) => void,
     ) {
+        const id = v4();
+        console.log(id);
         return KucoinWs.connect(
-            new MarketTickerAllPubDto(v4()),
+            new MarketTickerAllPubDto(id),
             afterConnect,
         );
     }
 
     public finish() {
         this.ws.close();
+        this.ws.terminate();
+
+        // @ts-ignore
+        delete this.ws;
     }
 
     private static async connect(
@@ -87,13 +95,17 @@ export class KucoinWs {
             );
 
             ws.once('message', (welcomeMessage: WelcomeMessageDto) => {
+                console.log('welcome message', JSON.parse(welcomeMessage as any));
                 if (!isWelcomeMessageDto(welcomeMessage)) {
                     reject(new Error(`${welcomeMessage} is not of type ${WelcomeMessageDto.name}`));
                 }
 
                 ws.once('message', (ackMessage: AckMessageDto) => {
                     if (!isAckMessageDto(ackMessage, connectId)) {
-                        reject(new Error(`${ackMessage} is not of type ${AckMessageDto.name}`));
+                        console.log('WARNING');
+                        console.log('ACK MESSAGE EXPECTED!');
+                        console.log(JSON.parse(ackMessage));
+                        // reject(new Error(`${ackMessage} is not of type ${AckMessageDto.name}`));
                     }
 
                     clearTimeout(offTimer);
