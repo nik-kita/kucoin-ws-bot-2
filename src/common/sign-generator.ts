@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import moment from 'moment';
 import dotenv from 'dotenv';
+import QueryString from 'qs';
 
 dotenv.config();
 
@@ -27,10 +28,17 @@ export class SignGenerator {
     public generateHeaders(
         method: 'GET' | 'POST',
         endpoint: string,
-        body: object | '',
+        options: {
+            params?: object,
+            body?: object,
+        } = {},
     ) {
+        const { params, body } = options;
+        const _endpoint = params
+            ? `${endpoint}?${QueryString.stringify(params)}`
+            : endpoint;
         const timestamp = moment().format('x');
-        const stringToSign = this.stringToSign(endpoint, timestamp, method, body);
+        const stringToSign = this.stringToSign(_endpoint, timestamp, method, body);
         const signature = this.signature(stringToSign);
         const signedPassphrase = this.signature(this.passphrase);
 
@@ -61,9 +69,15 @@ export class SignGenerator {
         endpoint: string,
         timestamp: string,
         method: 'GET' | 'POST',
-        body: object | '' = '',
+        body?: object | string,
     ) {
-        const result = timestamp + method + endpoint + (typeof body === 'string' ? body : JSON.stringify(body));
+        let _body: string | object = body ?? '';
+
+        if (Object(body) === body) {
+            _body = JSON.stringify(body);
+        }
+
+        const result = timestamp + method + endpoint + _body;
 
         return result;
     }

@@ -23,7 +23,6 @@ class AuthApi {
             .generateHeaders(
                 method,
                 endpoint,
-                '',
             );
 
         const { data: axiosData } = await axios({

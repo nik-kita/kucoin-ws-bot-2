@@ -32,7 +32,9 @@ class TradeApi {
         (details as LimitOrderDto & { clientOid: string }).clientOid = v4();
         const headers = SignGenerator
             .create()
-            .generateHeaders(method, endpoint, details);
+            .generateHeaders(method, endpoint, {
+                body: details,
+            });
         const { data: axiosData } = await axios({
             headers,
             method,

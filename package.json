@@ -20,6 +20,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
     "moment": "^2.29.1",
+    "qs": "^6.10.2",
     "uuid": "^8.3.2",
     "ws": "^8.3.0"
   },
@@ -27,6 +28,7 @@
     "@types/axios": "^0.14.0",
     "@types/moment": "^2.13.0",
     "@types/node": "^16.11.11",
+    "@types/qs": "^6.9.7",
     "@types/uuid": "^8.3.3",
     "@types/ws": "^8.2.1",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
