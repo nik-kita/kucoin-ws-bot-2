@@ -26,8 +26,10 @@ export class KucoinWs {
         private connectId: string,
         private pingTimeout: number,
         private sendData: IGeneralSubscribe,
-        private onMessage: (data: any) => void,
-    ) { }
+        private afterConnect: (_ws: WebSocket) => void,
+    ) {
+
+    }
 
     public get originalWs() {
         return this.ws;
@@ -37,30 +39,35 @@ export class KucoinWs {
         return this.connectId;
     }
 
-    public static async subscribeSomeTickers(coins: string[], onMessage: (data: any) => void) {
+    public static async subscribeSomeTickers(
+        coins: string[],
+        afterConnect: (ws: WebSocket) => void,
+    ) {
         return KucoinWs.connect(
             new MarketTickerSomePubDto(v4(), coins),
-            onMessage,
-            10000,
-            30000,
+            afterConnect,
         );
     }
 
-    public static async subscribeAllTickers(onMessage: (data: any) => void) {
+    public static async subscribeAllTickers(
+        afterConnect: (ws: WebSocket) => void,
+    ) {
         return KucoinWs.connect(
             new MarketTickerAllPubDto(v4()),
-            onMessage,
-            10000,
-            30000,
+            afterConnect,
         );
+    }
+
+    public finish() {
+        this.ws.close();
     }
 
     private static async connect(
         sendData: IGeneralSubscribe,
-        onMessage: (data: any) => void,
-        waitForConnect: number,
-        pingPongInterval: number,
+        afterConnect: (ws: WebSocket) => void,
     ) {
+        const waitForConnect = 10000;
+        const pingPongInterval = 30000;
         const { id: connectId } = sendData;
         const { token, instanceServers } = await bulletPrivateReq();
         const [server] = instanceServers;
@@ -70,7 +77,7 @@ export class KucoinWs {
             connectId,
             pingPongInterval,
             sendData,
-            onMessage,
+            afterConnect,
         );
 
         client.waitForConnection = new Promise<void>((resolve, reject) => {
@@ -96,7 +103,7 @@ export class KucoinWs {
                         pingPongInterval,
                     );
 
-                    ws.on('message', client.onMessage);
+                    client.afterConnect.call(this, ws);
 
                     resolve();
                 });

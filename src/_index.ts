@@ -1,5 +1,6 @@
 /* eslint-disable no-multi-assign */
 /* eslint-disable no-param-reassign */
+import { WebSocket } from 'ws';
 import { MessageType } from './ws/dto/market-ticker-all-sub.dto';
 import { KucoinWs } from './ws/kucoin-ws';
 
@@ -30,7 +31,11 @@ const map = new Map<string, MessageType>();
         }
     };
 
-    await KucoinWs.subscribeAllTickers(onMessage);
+    const afterConnect = (ws: WebSocket) => {
+        ws.on('message', onMessage);
+    };
+
+    await KucoinWs.subscribeAllTickers(afterConnect);
 
     await new Promise<void>((resolve) => {
         setTimeout(() => {

@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist",
     "build": "npx tsc -p tsconfig.json",
-    "_start": "npm run build && node dist/_index.js"
+    "_start": "npm run build && node dist/_index.js",
+    "bot:sell-on-first-down": "npm run build && node dist/bots/sell-on-first-down.bot.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
   "dependencies": {
     "@types/dotenv": "^8.2.0",
     "axios": "^0.24.0",
+    "console-input": "^1.0.2",
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
     "moment": "^2.29.1",

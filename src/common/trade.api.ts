@@ -16,12 +16,13 @@ type MarketOrderDto = {
     side: 'buy' | 'sell',
     symbol: string,
     type: 'market',
-    funds: string,
+    funds?: string,
+    size?: string,
 }
 
 class TradeApi {
     public static async placeMarketOrder(
-        details: Pick<MarketOrderDto, 'side' | 'symbol' | 'funds'>,
+        details: MarketOrderDto,
     ) {
         return TradeApi.placeNewSingleOrder({ ...details, type: 'market' });
     }
